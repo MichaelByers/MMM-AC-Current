@@ -21,13 +21,11 @@ module.exports = NodeHelper.create({
         request({url: this.url, method: 'GET'}, function(error, response, body) {
             // Lets convert the body into JSON
             var result = JSON.parse(body);
-            var forecast = []; // Clear the array
+            var forecast = ''; 
 
             // Check to see if we are error free and got an OK response
             if (!error && response.statusCode == 200) { 
-                for (var i=0; i < 3; i++) {
-                    forecast.push(result.DailyForecasts[i]);
-                }
+                forecast=result;
             } else {
                 // In all other cases it's some other error
                 console.log('[MMM-AC-Current] ' + result.Code);

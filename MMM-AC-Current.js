@@ -28,7 +28,7 @@ Module.register('MMM-AC-Current', {
         this.units = this.config.units;
         this.loaded = false;
 		this.url = 'http://dataservice.accuweather.com/currentconditions/v1/' + this.config.loc + '?apikey=' + this.config.apikey + '&metric=' + this.config.metric + '&lang=' + this.config.lang + '&details=true';
-        this.forecast = [];
+        this.forecast = '';
 
         // Trigger the first request
         this.getWeatherData(this);
@@ -55,16 +55,15 @@ Module.register('MMM-AC-Current', {
 
         // If we have some data to display then build the results
         if (this.loaded) {
-            wrapper = document.createElement('table');
+            wrapper = document.createElement('div');
 	 	    wrapper.className = 'forecast small';
-            forecastRow = document.createElement('tr');
             var hour = moment().hour();
  
             var forecastClass = 'today';
             var title = 'Current';
             
             // Create the details for this day
-            forcastDay = document.createElement('td');
+            forcastDay = document.createElement('div');
             forcastDay.className = 'forecastday ' + forecastClass;
 
             forcastTitle = document.createElement('div');
@@ -76,19 +75,20 @@ Module.register('MMM-AC-Current', {
             windIcon.className = 'detailIcon';
             windIcon.setAttribute('height', '15');
             windIcon.setAttribute('width', '15');
-            windIcon.src = './modules/MMM-AC-3Day-Forecast/images/wind.png';
+            windIcon.src = './modules/MMM-AC-Current/images/wind.png';
             windText = document.createElement('span');
+            windText.className = 'forecastDetail';
             windText.innerHTML = Math.round(this.forecast.Wind.Speed.Imperial.Value) + ' &#10613; ' + Math.round(this.forecast.WindGust.Speed.Imperial.Value) + '<span style="font-size: 15px"> mph</font>';
             
             // Build up the details regarding weather icon
             forecastIcon = document.createElement('img');
             forecastIcon.className = 'forecastIcon';
-            forecastIcon.setAttribute('height', '65');
-            forecastIcon.setAttribute('width', '75');
+            forecastIcon.setAttribute('height', '75');
+            forecastIcon.setAttribute('width', '100');
             var icon = '';
             icon = this.forecast.WeatherIcon;
             if (icon < 10) {
-                icon = "0" + this.forecast[i].WeatherIcon;
+                icon = "0" + this.forecast.WeatherIcon;
             }
             forecastIcon.src = 'https://developer.accuweather.com/sites/default/files/' + icon + '-s.png';
 
@@ -104,17 +104,13 @@ Module.register('MMM-AC-Current', {
 
             // Now assemble the details
             forcastDay.appendChild(forcastTitle);
-            forcastDay.appendChild(windIcon);
-            forcastDay.appendChild(windText);
-
             forcastDay.appendChild(forecastIcon);
             forcastDay.appendChild(tempText);
-            forcastDay.appendChild(tempBr);
             forcastDay.appendChild(forecastText);
+//            forcastDay.appendChild(windIcon);
+//            forcastDay.appendChild(windText);
 
-            // Now assemble the final output
-            forecastRow.appendChild(forcastDay);
-            wrapper.appendChild(forecastRow);
+            wrapper.appendChild(forcastDay);
         } else {
             // Otherwise lets just use a simple div
             wrapper = document.createElement('div');
@@ -131,7 +127,7 @@ Module.register('MMM-AC-Current', {
                 // we got some data so set the flag, stash the data to display then request the dom update
                 if(payload.forecast.length > 0) {
                     this.loaded = true;
-                    this.forecast = payload.forecast;
+                    this.forecast = payload.forecast[0];
                 }
                 this.updateDom(1000);
             }
