@@ -44,7 +44,11 @@ Module.register('MMM-AC-Current', {
 
     getWeatherData: function(_this) {
         // Make the initial request to the helper then set up the timer to perform the updates
-        _this.sendSocketNotification('GET-AC-CURRENT', _this.url);
+	var hour = moment().hour();
+
+	if( (hour >= 6) && (hour <=22) ) {
+            _this.sendSocketNotification('GET-AC-CURRENT', _this.url);
+	}
     },
 
 
@@ -109,8 +113,8 @@ Module.register('MMM-AC-Current', {
             forcastDay.appendChild(forecastText);
 //            forcastDay.appendChild(windIcon);
 //            forcastDay.appendChild(windText);
-
             wrapper.appendChild(forcastDay);
+
         } else {
             // Otherwise lets just use a simple div
             wrapper = document.createElement('div');
